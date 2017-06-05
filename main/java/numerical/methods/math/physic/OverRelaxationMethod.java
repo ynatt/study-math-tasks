@@ -33,7 +33,7 @@ public  class OverRelaxationMethod {
         omega = 2 / (1 + sqrt(delta * (2 - delta)));
         A = -1/pow(stepX,2);
         B = -1/pow(stepY,2);
-        C = 4/pow(stepX,2);
+        C = 2/pow(stepX,2) + 2/pow(stepY,2);
         epsilon = factor * (pow(stepX,2) + pow(stepY,2));
         setEdgeValues();
         setInnerValues(0.5);
@@ -84,17 +84,19 @@ public  class OverRelaxationMethod {
     public void getSolve(){
         double discrepancy;
         double norm = epsilon;
+        int iterations = 0;
         while(norm>=epsilon) {
             norm=0;
             for (int i = 1; i < stepNumberX - 1; i++) {
                 for (int j = 1; j < stepNumberY - 1; j++) {
-                    discrepancy = A * solve[i-1][j] + B * solve[i][j-1] + C * solve[i][j] + A * solve[i+1][j] + B * solve[j][i+1];
+                    discrepancy = A * solve[i-1][j] + B * solve[i][j-1] + C * solve[i][j] + A * solve[i+1][j] + B * solve[i][j+1];
                     solve[i][j] = solve[i][j] - omega/C * discrepancy;
                     norm += pow(discrepancy,2) * stepX * stepY;
                 }
             }
-            System.out.println(norm);
+            iterations++;
         }
+        System.out.println("Итераций: " + iterations );
     }
 
     public void exportSolve(){
@@ -130,11 +132,10 @@ public  class OverRelaxationMethod {
     }
 
     public static void main(String[] args) {
-        OverRelaxationMethod orm = new OverRelaxationMethod(1,1,10,10,1);
+        OverRelaxationMethod orm = new OverRelaxationMethod(1,1,40,40,1);
         System.out.println(orm);
         orm.showGraf();
         orm.getSolve();
-        orm.showGraf();
         orm.exportSolve();
     }
 
