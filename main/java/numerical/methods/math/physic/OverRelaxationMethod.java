@@ -68,17 +68,7 @@ public  class OverRelaxationMethod {
     }
 
     private double countDiscrepancy( int i, int j){
-        return A * solve[i-1][j] + B * solve[i][j-1] + C * solve[i][j] + A * solve[i+1][j] + B * solve[j][i+1];
-    }
-
-    public double countNorm(){
-        double r = 0;
-        for(int i = 1; i < stepNumberX - 1; i++ ){
-            for(int j = 1; j < stepNumberY - 1; j++ ){
-                r= r + pow(countDiscrepancy(i,j),2) * stepX * stepY;
-           }
-        }
-        return r;
+        return A * solve[i-1][j] + B * solve[i][j-1] + C * solve[i][j] + A * solve[i+1][j] + B * solve[i][j+1];
     }
 
     public void getSolve(){
@@ -89,8 +79,8 @@ public  class OverRelaxationMethod {
             norm=0;
             for (int i = 1; i < stepNumberX - 1; i++) {
                 for (int j = 1; j < stepNumberY - 1; j++) {
-                    discrepancy = A * solve[i-1][j] + B * solve[i][j-1] + C * solve[i][j] + A * solve[i+1][j] + B * solve[i][j+1];
-                    solve[i][j] = solve[i][j] - omega/C * discrepancy;
+                    discrepancy = countDiscrepancy(i,j);
+                    solve[i][j] = solve[i][j] - (omega * discrepancy) / C;
                     norm += pow(discrepancy,2) * stepX * stepY;
                 }
             }
@@ -132,12 +122,10 @@ public  class OverRelaxationMethod {
     }
 
     public static void main(String[] args) {
-        OverRelaxationMethod orm = new OverRelaxationMethod(1,1,40,40,1);
+        OverRelaxationMethod orm = new OverRelaxationMethod(1,1,50,50,1);
         System.out.println(orm);
         orm.showGraf();
         orm.getSolve();
         orm.exportSolve();
     }
-
-
 }
